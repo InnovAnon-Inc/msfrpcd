@@ -39,7 +39,7 @@ jobs:
              apt source    -y bash
     - name: Customize Source Package
       run: |
-        P="$(ls -d bash-*+dfsg)"
+        P="$(ls -d bash-*/)"
 
         tee -a "$P/debian/configure.options" < \
              repo/.github/config/configure.options
@@ -59,13 +59,13 @@ jobs:
 
     - name: Run dch
       run: |
-        P="$(ls -d bash-*+dfsg)"
+        P="$(ls -d bash-*/)"
         cd "$P"                         && \
         dch -n back-syslog
 
     - name: Run debuild
       run: |
-        P="$(ls -d bash-*+dfsg)"
+        P="$(ls -d bash-*/)"
         cd "$P"                         && \
         DEB_BUILD_OPTIONS='ccache nocheck' \
         DEB_CONFIGURE_EXTRA_FLAGS=''       \
