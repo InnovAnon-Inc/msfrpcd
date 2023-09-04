@@ -1,0 +1,4 @@
+--enable-threads=posix
+--disable-rpath
+--without-bash-malloc
+
