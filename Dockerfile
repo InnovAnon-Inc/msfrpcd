@@ -12,6 +12,7 @@ RUN apt update                     \
     --no-install-recommends        \
     /tmp/dist/bash_*.deb           \
     /tmp/dist/bash-builtins*.deb   \
+    less                           \
     vim                            \
 &&  apt autoremove   -y            \
     --purge                        \
