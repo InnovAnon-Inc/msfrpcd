@@ -59,10 +59,11 @@ jobs:
       run: |
         T="$(ls bash_*.orig.tar.*)"
         rm -v "$T"
-        tar acpf "$"            \
+        tar acpf "$T"           \
           --exclude-vcs         \
           --exclude-vcs-ignores \
           "$P"
+        [[ -f "$T" ]]
 
     - name: Run dch
       working-directory: ${{ env.P }}
