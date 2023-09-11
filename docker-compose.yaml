@@ -1,4 +1,6 @@
 version: '3.8'
+#include:
+#  - ../pgrsyslog-client/docker-compose.yaml
 services:
   bash:
     image:           innovanon/bash-syslog
@@ -7,12 +9,10 @@ services:
       - bash-root:/root:rw
       - syslog-client:/etc/rsyslog.d:ro
     restart:         always
-    #depends_on:
-    #  syslog:
-    #    condition:   service_started
+    depends_on:
+      syslog:
+        condition:   service_started
 
 volumes:
   bash-root:
-  syslog-client:
-
 
