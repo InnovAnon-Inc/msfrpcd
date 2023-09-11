@@ -12,8 +12,7 @@ services:
     #    condition:   service_started
 
 volumes:
-  slapd-certs:
-  slapd-root:
+  bash-root:
   syslog-client:
 
 
