@@ -60,8 +60,6 @@ jobs:
     - name: Run dch
       working-directory: ${{ env.P }}
       run: |
-        P="$(ls -d bash-*/)"
-        cd "$P"                         && \
         dch -n back-syslog --nmu
 
     - name: Configure GPG Key
@@ -73,8 +71,6 @@ jobs:
     - name: Run debuild
       working-directory: ${{ env.P }}
       run: |
-        P="$(ls -d bash-*/)"
-        cd "$P"                         && \
         DEB_BUILD_OPTIONS='ccache nocheck' \
         DEB_CONFIGURE_EXTRA_FLAGS=''       \
         DFSG_NONFREE=true                  \
