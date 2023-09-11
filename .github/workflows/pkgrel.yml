@@ -55,17 +55,20 @@ jobs:
         # TODO rename .deb package
         # TODO conflicts with original packages -- bash, etc.
 
+    - name: Remove original source directory
+      run: |
+        T="$(ls bash_*.orig.tar.*)"
+        rm -v "$T"
+        tar acpf "$"            \
+          --exclude-vcs         \
+          --exclude-vcs-ignores \
+          "$P"
+
     - name: Run dch
       working-directory: ${{ env.P }}
       run: |
         dch -n back-syslog
         #dch -n back-syslog --nmu
-
-    - name: Remove original source directory
-      run: |
-        rm -v bash_*.orig.tar.*
-        # TODO
-        ls -ltra
 
     - name: Configure GPG Key
       run: |
