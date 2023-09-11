@@ -39,7 +39,9 @@ jobs:
 
     - name: Configure Environment
       run: |
-        P="$(ls -d bash_*/)"
+        # TODO
+        ls -ltra
+        P="$(ls -d bash-*/)"
         echo "P=$P"                           >> $GITHUB_ENV
         [[ -d "$P" ]]
         #echo 'DEBEMAIL=InnovAnon-Inc@gmx.com' >> $GITHUB_ENV
