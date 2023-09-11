@@ -61,6 +61,12 @@ jobs:
         dch -n back-syslog
         #dch -n back-syslog --nmu
 
+    - name: Remove original source directory
+      run: |
+        rm -v bash_*.orig.tar.*
+        # TODO
+        ls -ltra
+
     - name: Configure GPG Key
       run: |
         echo -n "$GPG_SIGNING_KEY" | gpg --import
