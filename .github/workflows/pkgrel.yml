@@ -5,13 +5,12 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '* * 0 * *'
+    - cron: '* * 1 * *'
   #[workflow_call]
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
 
 jobs:
   build:
@@ -37,33 +36,40 @@ jobs:
         sudo apt update
         sudo apt build-dep -y bash
              apt source    -y bash
-    - name: Customize Source Package
+
+    - name: Configure Environment
       run: |
         P="$(ls -d bash-*/)"
-
+        echo "P=$P"                           >> $GITHUB_ENV
+        [[ -d "$P" ]]
+        #echo 'DEBEMAIL=InnovAnon-Inc@gmx.com' >> $GITHUB_ENV
+        
+    - name: Customize Source Package
+      run: |
         tee -a "$P/debian/configure.options" < \
              repo/.github/config/configure.options
 
         tee -a "$P/config-top.h"             < \
              repo/.github/config/config-top.h
 
-        #awk -f repo/.github/scripts/control.awk \
-        #"$P/debian/control"   > \
-        #"$P/debian/control.new"
-        #mv -v                   \
-        #"$P/debian/control.new" \
-        #"$P/debian/control"
-
         # TODO rename .deb package
         # TODO conflicts with original packages -- bash, etc.
 
     - name: Run dch
+      working-directory: ${{ env.P }}
       run: |
         P="$(ls -d bash-*/)"
         cd "$P"                         && \
-        dch -n back-syslog
+        dch -n back-syslog --nmu
+
+    - name: Configure GPG Key
+      run: |
+        echo -n "$GPG_SIGNING_KEY" | gpg --import
+      env:
+        GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
 
     - name: Run debuild
+      working-directory: ${{ env.P }}
       run: |
         P="$(ls -d bash-*/)"
         cd "$P"                         && \
@@ -72,11 +78,13 @@ jobs:
         DFSG_NONFREE=true                  \
         debuild                            \
           --no-lintian                     \
-          -b -i -uc -us
+          -kD81CD473833607F8BEF1ECAA60F9747587CBBCD8 \
+          -i
 
-    #- name: sign installation package
-    #  working-directory: ${{ github.workspace }}
-    #  run: gpg --yes --detach-sig linux-${{ env.tag }}.tar.xz
+    - name: Create dist dir for Docker
+      run: |
+        mkdir -v                                           repo/dist/
+        mv    -v *.deb *.dsc *.buildinfo *.changes *.build repo/dist/
 
     - name: Bump version and push tag
       id:   tag_version
@@ -91,7 +99,41 @@ jobs:
         fail_on_unmatched_files: true
         generate_release_notes: true
         files: |
-          bash_*.*-*ubuntu*.*_amd64.deb
-          bash-builtins_*.*-*ubuntu*.*_amd64.deb
-          bash-static_*.*-*ubuntu*.*_amd64.deb
+          repo/dist/*
+
+    - name: Notify PPA
+      uses: passeidireto/trigger-external-workflow-action@main
+      env:
+        PAYLOAD_AUTHOR: ${{ github.author }}
+        PAYLOAD_REVISION: "3"
+      with:
+        repository: InnovAnon-Inc/ppa
+        event: doc_update
+        github_pat: ${{ secrets.REPO_PAT }}
+
+    # TODO new image
+    - name: Authenticate with Docker Hub
+      run: |
+        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - name: Build Docker Image
+      working-directory: "repo"
+      run: |
+        docker build -t "innovanon/bash-syslog:$TEAMHACK_VERSION" .
+      env:
+        TEAMHACK_VERSION: ${{ steps.tag_version.outputs.new_tag }}
+
+    - name: Tag Docker Image
+      run: |
+        docker tag      "innovanon/bash-syslog:$TEAMHACK_VERSION" \
+                         innovanon/bash-syslog:latest
+      env:
+        TEAMHACK_VERSION: ${{ steps.tag_version.outputs.new_tag }}
+
+    - name: Deploy Docker Image
+      run: |
+        docker push      innovanon/bash-syslog
 
