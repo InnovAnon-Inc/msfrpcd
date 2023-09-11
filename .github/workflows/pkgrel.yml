@@ -68,8 +68,8 @@ jobs:
     - name: Run dch
       working-directory: ${{ env.P }}
       run: |
-        dch -n back-syslog
-        #dch -n back-syslog --nmu
+        #dch -n back-syslog
+        dch -n back-syslog --nmu
 
     - name: Configure GPG Key
       run: |
