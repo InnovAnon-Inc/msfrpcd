@@ -115,7 +115,7 @@ jobs:
         PAYLOAD_REVISION: "3"
       with:
         repository: InnovAnon-Inc/ppa
-        event: doc_update
+        event: bash_update
         github_pat: ${{ secrets.REPO_PAT }}
 
     # TODO new image
