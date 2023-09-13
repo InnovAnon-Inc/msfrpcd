@@ -14,6 +14,10 @@ RUN apt update                     \
 &&  rm -rf  /var/lib/apt/lists/*   \
 &&  rm -rfv /tmp/dist/
 
+
+WORKDIR ["/upload"]
+VOLUME ["/upload"]
+
 VOLUME ["/usr/share/metasploit-framework/config"]
 ENTRYPOINT ["/usr/bin/env", "msfrpcd", "-f"]
 
