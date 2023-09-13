@@ -15,5 +15,5 @@ RUN apt update                     \
 &&  rm -rfv /tmp/dist/
 
 VOLUME ["/usr/share/metasploit-framework/config"]
-ENTRYPOINT ["/usr/bin/env", "metasploit-framework", "-f"]
+ENTRYPOINT ["/usr/bin/env", "msfrpcd", "-f"]
 

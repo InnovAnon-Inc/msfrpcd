@@ -8,7 +8,7 @@ services:
     container_name:  bash
     ports:
       - "0.0.0.0:55553:55553"
-    command: ["-U", $MSFRPC_USERNAME, "-P", $MSFRPC_PASSWORD]
+    command: ["-S", "-U", $MSFRPC_USERNAME, "-P", $MSFRPC_PASSWORD]
     volumes:
       - msfrpcd:/usr/share/metasploit-framework/config:rw
       - syslog-client:/etc/rsyslog.d:ro
