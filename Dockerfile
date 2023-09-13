@@ -21,5 +21,13 @@ VOLUME ["/upload"]
 VOLUME ["/usr/share/metasploit-framework/config"]
 ENTRYPOINT ["/usr/bin/env", "msfrpcd", "-f"]
 
+ENV MSFRPC_USERNAME
+ENV MSFRPC_PASSWORD
+CMD [                     \
+  "-S",                   \ 
+  "-U", $MSFRPC_USERNAME, \
+  "-P", $MSFRPC_PASSWORD  \
+]
+
 EXPOSE 55553/tcp
 

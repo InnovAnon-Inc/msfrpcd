@@ -8,7 +8,7 @@ services:
     container_name:  msfrpcd
     ports:
       - "0.0.0.0:55553:55553/tcp"
-    command: ["-S", "-U", ${MSFRPC_USERNAME}, "-P", ${MSFRPC_PASSWORD}]
+    #command: ["-S", "-U", $MSFRPC_USERNAME, "-P", $MSFRPC_PASSWORD]
     volumes:
       - msfrpcd:/usr/share/metasploit-framework/config:rw
       - import-db:/upload:ro
