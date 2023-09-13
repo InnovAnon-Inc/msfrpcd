@@ -2,47 +2,23 @@ version: '3.8'
 #include:
 #  - ../pgrsyslog-client/docker-compose.yaml
 services:
-  bash:
-    image:           innovanon/bash-syslog
+  msfrpcd:
+    env_file:        .env
+    image:           innovanon/msfrpcd
     container_name:  bash
+    ports:
+      - "0.0.0.0:55553:55553"
+    command: ["-U", $MSFRPC_USERNAME, "-P", $MSFRPC_PASSWORD]
     volumes:
-      - apt-cacher-ng:/mnt/apt-cacher-ng:rw
-      - bash-root:/root:rw
-      #- bash-root:/mnt/bash-root:rw
-      #- dcc-afl:/mnt/dcc-afl:rw
-      #- dcc-debian:/mnt/dcc:rw
-      - ccache-etc:/mnt/ccache-etc:rw
-      - ccache-redis:/mnt/ccache-redis:rw
-      - dcc-kali:/mnt/dcc-kali:rw
-      - dcc-ubuntu:/mnt/dcc-ubuntu:rw
-      - dcc-voidlinux:/mnt/dcc-voidlinux:rw
-      #- dns-keys:/mnt/dns-keys:rw
-      #- dns-zones:/mnt/dns-zones:rw
-      #- ovpn1-conf:/mnt/ovpn1-conf:rw
-      #- ovpn2-conf:/mnt/ovpn2-conf:rw
-      - pgdata:/mnt/pgdata:rw
-      - redis-certs:/mnt/redis-certs:rw
-      #- redis-conf:/mnt/redis-conf:rw
-      - redis-data:/mnt/redis-data:rw
-      - ../../mnt/test:/mnt/test:rw
-      - slapd-certs:/mnt/slapd-certs:rw
-      - slapd-root:/mnt/slapd-root:rw
-      #- syslog-client:/mnt/syslog-client:rw
+      - msfrpcd:/usr/share/metasploit-framework/config:rw
       - syslog-client:/etc/rsyslog.d:ro
-      - syslog-client:/mnt/syslog-client:rw
-      - syslog-etc:/mnt/syslog-etc:rw
-      - syslog-log:/mnt/syslog-log:rw
-      - tor-etc:/mnt/tor-etc
-      - vpn-c2-etc:/mnt/vpn-c2-etc:rw
-      - vpn-s-etc:/mnt/vpn-s1-etc:rw
-      - vpn-s-peer1:/mnt/vpn-s1-peer1:rw
-      #- vpn-s1-mod:/mnt/vpn-s1-mod:rw
-
     restart:         always
     depends_on:
+      postgres:
+        condition:   service_healthy
       syslog:
         condition:   service_started
 
 volumes:
-  bash-root:
+  msfrpcd:
 

@@ -1,4 +1,4 @@
-name: Syslog-Enabled BASh
+name: Dockerized MSF RPC Daemon
 permissions:
   contents: write
 
@@ -17,81 +17,10 @@ jobs:
     name: build package
     runs-on: ubuntu-latest
     steps:
-    - name: install build deps
-      uses: awalsh128/cache-apt-pkgs-action@latest
-      with:
-        packages: >
-          build-essential devscripts
-          dpkg-dev fakeroot groff
-        version: 1.0
-    
     - name: Checkout code
       uses: actions/checkout@v3
       with:
         path: "repo"
-
-    - name: Build Deps
-      run: |
-        sudo sed -i 'p;s@^deb@&-src@' /etc/apt/sources.list
-        sudo apt update
-        sudo apt build-dep -y bash
-             apt source    -y bash
-
-    - name: Configure Environment
-      run: |
-        P="$(ls -d bash-*/)"
-        echo "P=$P"                           >> $GITHUB_ENV
-        [[ -d "$P" ]]
-        #echo 'DEBEMAIL=InnovAnon-Inc@gmx.com' >> $GITHUB_ENV
-        
-    - name: Customize Source Package
-      run: |
-        tee -a "$P/debian/configure.options" < \
-             repo/.github/config/configure.options
-
-        tee -a "$P/config-top.h"             < \
-             repo/.github/config/config-top.h
-
-        # TODO rename .deb package
-        # TODO conflicts with original packages -- bash, etc.
-
-    - name: Remove original source directory
-      run: |
-        T="$(ls bash_*.orig.tar.*)"
-        rm -v "$T"
-        tar acpf "$T"           \
-          --exclude-vcs         \
-          --exclude-vcs-ignores \
-          "$P"
-        [[ -f "$T" ]]
-
-    - name: Run dch
-      working-directory: ${{ env.P }}
-      run: |
-        #dch -n back-syslog
-        dch -n back-syslog --nmu
-
-    - name: Configure GPG Key
-      run: |
-        echo -n "$GPG_SIGNING_KEY" | gpg --import
-      env:
-        GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-
-    - name: Run debuild
-      working-directory: ${{ env.P }}
-      run: |
-        DEB_BUILD_OPTIONS='ccache nocheck' \
-        DEB_CONFIGURE_EXTRA_FLAGS=''       \
-        DFSG_NONFREE=true                  \
-        debuild                            \
-          --no-lintian                     \
-          -kD81CD473833607F8BEF1ECAA60F9747587CBBCD8 \
-          -i
-
-    - name: Create dist dir for Docker
-      run: |
-        mkdir -v                                           repo/dist/
-        mv    -v *.deb *.dsc *.buildinfo *.changes *.build repo/dist/
 
     - name: Bump version and push tag
       id:   tag_version
@@ -108,16 +37,6 @@ jobs:
         files: |
           repo/dist/*
 
-    - name: Notify PPA
-      uses: passeidireto/trigger-external-workflow-action@main
-      env:
-        PAYLOAD_AUTHOR: ${{ github.author }}
-        PAYLOAD_REVISION: "3"
-      with:
-        repository: InnovAnon-Inc/ppa
-        event: bash_update
-        github_pat: ${{ secrets.REPO_PAT }}
-
     # TODO new image
     - name: Authenticate with Docker Hub
       run: |
@@ -129,18 +48,18 @@ jobs:
     - name: Build Docker Image
       working-directory: "repo"
       run: |
-        docker build -t "innovanon/bash-syslog:$TEAMHACK_VERSION" .
+        docker build -t "innovanon/msfrpcd:$TEAMHACK_VERSION" .
       env:
         TEAMHACK_VERSION: ${{ steps.tag_version.outputs.new_tag }}
 
     - name: Tag Docker Image
       run: |
-        docker tag      "innovanon/bash-syslog:$TEAMHACK_VERSION" \
-                         innovanon/bash-syslog:latest
+        docker tag      "innovanon/msfrpcd:$TEAMHACK_VERSION" \
+                         innovanon/msfrpcd:latest
       env:
         TEAMHACK_VERSION: ${{ steps.tag_version.outputs.new_tag }}
 
     - name: Deploy Docker Image
       run: |
-        docker push      innovanon/bash-syslog
+        docker push      innovanon/msfrpcd
 
