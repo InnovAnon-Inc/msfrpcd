@@ -17,3 +17,5 @@ RUN apt update                     \
 VOLUME ["/usr/share/metasploit-framework/config"]
 ENTRYPOINT ["/usr/bin/env", "msfrpcd", "-f"]
 
+EXPOSE 55553/tcp
+
