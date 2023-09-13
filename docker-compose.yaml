@@ -5,7 +5,7 @@ services:
   msfrpcd:
     env_file:        .env
     image:           innovanon/msfrpcd
-    container_name:  bash
+    container_name:  msfrpcd
     ports:
       - "0.0.0.0:55553:55553"
     command: ["-S", "-U", $MSFRPC_USERNAME, "-P", $MSFRPC_PASSWORD]
