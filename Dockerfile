@@ -15,7 +15,7 @@ RUN apt update                     \
 &&  rm -rfv /tmp/dist/
 
 
-WORKDIR ["/upload"]
+WORKDIR  /upload
 VOLUME ["/upload"]
 
 VOLUME ["/usr/share/metasploit-framework/config"]
