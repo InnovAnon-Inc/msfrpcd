@@ -8,22 +8,27 @@ services:
     container_name:  msfrpcd
     ports:
       - "0.0.0.0:55553:55553/tcp"
+      #- "10.5.0.8:55553:55553/tcp"
     command: ["-S", "-U", $MSFRPC_USERNAME, "-P", $MSFRPC_PASSWORD]
     volumes:
       - msfrpcd:/usr/share/metasploit-framework/config:rw
       - import-db:/upload:ro
-      - syslog-client:/etc/rsyslog.d:ro
+      #- syslog-client:/etc/rsyslog.d:ro
     restart:         always
     healthcheck:
       test: ["CMD-SHELL", "wget -nv -O/dev/null http://0.0.0.0:55553/api"]
       interval:     10s
       timeout:       5s
       retries:       10
-    depends_on:
-      postgres:
-        condition:   service_healthy
-      syslog:
-        condition:   service_started
+    #depends_on:
+    #  postgres:
+    #    condition:   service_healthy
+    #  syslog:
+    #    condition:   service_started
+    # TODO
+    #networks:
+    #  network:
+    #    ipv4_address: 10.5.0.8
 
 volumes:
   msfrpcd:
