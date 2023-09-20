@@ -20,11 +20,11 @@ services:
       interval:     10s
       timeout:       5s
       retries:       10
-    #depends_on:
-    #  postgres:
-    #    condition:   service_healthy
-    #  syslog:
-    #    condition:   service_started
+    depends_on:
+      postgres:
+        condition:   service_healthy
+      syslog:
+        condition:   service_started
     # TODO
     #networks:
     #  network:
@@ -32,4 +32,5 @@ services:
 
 volumes:
   msfrpcd:
+    external: true
 
