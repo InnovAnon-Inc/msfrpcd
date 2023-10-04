@@ -1,6 +1,0 @@
-#define SYSLOG_HISTORY
-#if defined (SYSLOG_HISTORY)
-#  define SYSLOG_FACILITY LOG_USER
-#  define SYSLOG_LEVEL LOG_INFO
-#endif
-
