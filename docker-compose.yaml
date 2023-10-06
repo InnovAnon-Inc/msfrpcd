@@ -12,7 +12,7 @@ services:
     command: ["-S", "-U", $MSFRPC_USERNAME, "-P", $MSFRPC_PASSWORD]
     volumes:
       - msfrpcd:/usr/share/metasploit-framework/config:rw
-      - import-db:/upload:ro
+      - import-db:/var/teamhack/upload:ro
       #- syslog-client:/etc/rsyslog.d:ro
     restart:         always
     healthcheck:
