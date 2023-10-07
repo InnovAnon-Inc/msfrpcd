@@ -12,14 +12,15 @@ RUN apt update                     \
     --purge                        \
 &&  apt clean        -y            \
 &&  rm -rf  /var/lib/apt/lists/*   \
-&&  rm -rfv /tmp/dist/
+&&  rm -rfv /tmp/dist/             \
+&&  test -x /usr/bin/env           \
+&&  command -v msfrpcd             \
+&&  command -v wget
 
 WORKDIR  /var/teamhack/upload
 VOLUME ["/var/teamhack/upload"]
 
 VOLUME ["/usr/share/metasploit-framework/config"]
-RUN test -x  /usr/bin/env
-RUN command -v msfrpcd
 ENTRYPOINT ["/usr/bin/env", "msfrpcd", "-f"]
 
 #ENV MSFRPC_USERNAME
