@@ -15,8 +15,8 @@ RUN apt update                     \
 &&  rm -rfv /tmp/dist/
 
 
-WORKDIR  /upload
-VOLUME ["/upload"]
+WORKDIR  /var/teamhack/upload
+VOLUME ["/var/teamhack/upload"]
 
 VOLUME ["/usr/share/metasploit-framework/config"]
 ENTRYPOINT ["/usr/bin/env", "msfrpcd", "-f"]
