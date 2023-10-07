@@ -1,5 +1,6 @@
 # msfrpcd [![msfrpcd](https://github.com/InnovAnon-Inc/msfrpcd/actions/workflows/pkgrel.yml/badge.svg)](https://github.com/InnovAnon-Inc/msfrpcd/actions/workflows/pkgrel.yml)
-Syslog-Enabled BASh
+Dockerized MSF RPC Daemon
+==========
 
 ## TODO
 - start syslog when container starts
