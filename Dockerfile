@@ -19,6 +19,7 @@ VOLUME ["/var/teamhack/upload"]
 
 VOLUME ["/usr/share/metasploit-framework/config"]
 RUN test -x  /usr/bin/env
+RUN command -v msfrpcd
 ENTRYPOINT ["/usr/bin/env", "msfrpcd", "-f"]
 
 #ENV MSFRPC_USERNAME
